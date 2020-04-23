@@ -15,30 +15,14 @@ spec:
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         - name: PORT
-            value: "{{ .Values.service.internalPort }}"
-          ports:
-            - name: http
-              containerPort: 8080
-              protocol: TCP
+            value: "{{ .Values.service.externalPort }}:{{.Values.service.internalPort}}"
           livenessProbe:
             httpGet:
-              path: /
-              port: http
+              path: {{.Values.livenessProbe.path}}
+              port: {{.Values.livenessProbe.port}}
           readinessProbe:
             httpGet:
-              path: /ready
-              port: http
+              path: {{.Values.readinessProbe.path}}
+              port: {{.Values.readinessProbe.port}}
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-      {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-    {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
-    {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
+                   {{}}
