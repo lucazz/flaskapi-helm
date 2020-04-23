@@ -1,27 +1,37 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: {{ .Chart.Name }}
+  name: {{ template "helm-chart.fullname" . }}
+  labels:
+    {{- include "helm-chart.labels" . | nindent 4 }}
+    app: {{ template "helm-chart.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.replicaCount }}
   template:
     metadata:
-      name: {{ .Chart.Name }}
       labels:
-        run: {{ .Chart.Name }}
+        app: {{ template "helm-chart.name" . }}
+        release: {{ .Release.Name }}
     spec:
       containers:
-      - name: {{ .Chart.Name }}
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        - name: PORT
-            value: "{{ .Values.service.externalPort }}:{{.Values.service.internalPort}}"
-        livenessProbe:
-          httpGet:
-            path: {{.Values.livenessProbe.path}}
-            port: {{.Values.livenessProbe.port}}
-        readinessProbe:
-          httpGet:
-            path: {{.Values.readinessProbe.path}}
-            port: {{.Values.readinessProbe.port}}
-        resources:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          - name: http
+            value: "{{ .Values.service.internalPort }}"
+          ports:
+            - containerPort: {{ .Values.service.internalPort }}
+          livenessProbe:
+{{ toYaml .Values.livenessProbe| indent 12 }}
+          readinessProbe:
+{{ toYaml .Values.readinessProbe | indent 12 }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+    {{- end }}

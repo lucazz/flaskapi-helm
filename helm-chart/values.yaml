@@ -1,22 +1,29 @@
 # Default values for helm-chart.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+---
 replicaCount: 1
 image:
   repository: julialamenza/api
   tag: 0.1.0
   pullPolicy: IfNotPresent
 service:
-  name: julialamenza/api
+  name: api
   externalPort: 8080
   internalPort: 8080
-  nodeport: 8080
+  protocol: TCP
+resources:
+  requests:
+    cpu: 100m
+    memory: 250M
+  limits:
+    cpu: 100m
+    memory: 250m
 livenessProbe:
-      httpGet:
-        path: /
-        port: tcp
+  httpGet:
+    path: /
+    port: http
 readinessProbe:
-            httpGet:
-              path: /ready
-              port: http
-resources: {}
+  httpGet:
+    path: /ready
+    port: http
