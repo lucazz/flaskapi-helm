@@ -15,10 +15,6 @@ livenessProbe:
       httpGet:
         path: /
         port: tcp
-    readinessProb:
-      httpGet:
-        path: /ready
-        port: http
 readinessProbe:
             httpGet:
               path: /ready
