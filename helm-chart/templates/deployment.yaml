@@ -16,13 +16,12 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         - name: PORT
             value: "{{ .Values.service.externalPort }}:{{.Values.service.internalPort}}"
-          livenessProbe:
-            httpGet:
-              path: {{.Values.livenessProbe.path}}
-              port: {{.Values.livenessProbe.port}}
-          readinessProbe:
-            httpGet:
-              path: {{.Values.readinessProbe.path}}
-              port: {{.Values.readinessProbe.port}}
-          resources:
-                   {{}}
+        livenessProbe:
+          httpGet:
+            path: {{.Values.livenessProbe.path}}
+            port: {{.Values.livenessProbe.port}}
+        readinessProbe:
+          httpGet:
+            path: {{.Values.readinessProbe.path}}
+            port: {{.Values.readinessProbe.port}}
+        resources:
